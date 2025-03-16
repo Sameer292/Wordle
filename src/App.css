@@ -9,7 +9,6 @@
     align-items: center;
     text-transform: uppercase;
     color: #ffffff;
-    /* -webkit-text-stroke: 1px white; */
     font-weight: 1000;
     font-size: 2em;
 
@@ -20,14 +19,11 @@
     flex-direction: row;
 }
 .correct{
-    /* color: black; */
     background-color: #538d4e;
 }
 .close{
-    /* color: black; */
     background-color: #b59f3b;
 }
 .wrong{
-    /* color: black; */
     background-color: #3a3a3c;
 }

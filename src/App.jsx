@@ -3,13 +3,20 @@ import { useEffect, useState } from 'react'
 import wordJson from './word.json'
 import './App.css'
 import Keyboard from '../components/Keyboard';
+import Line from '../components/Line';
+
+
+
 function App() {
-  const PROXY = "https://cors-anywhere.herokuapp.com/";
-  const API_URL = "https://api.frontendexpert.io/api/fe/wordle-words";
+  // const PROXY = "https://cors-anywhere.herokuapp.com/";
+  // const API_URL = "https://api.frontendexpert.io/api/fe/wordle-words";
   const [solution, Setsolution] = useState('');
   const [guesses, Setguesses] = useState(Array(6).fill(null));
   const [currentGuess, SetcurrentGuess] = useState('');
   const [isGameOver, setIsGameOver] = useState(false);
+  const [className, setClassName] = useState('tile');
+  const GUESS_LEGTH = 5;
+  
   useEffect(() => {
     const getWords = async () => {
       try {
@@ -32,32 +39,35 @@ function App() {
     };
     getWords();
   }, [])
-  useEffect(() => {
-    function handleKeyDown(e) {
-      if (isGameOver) return;
 
+  function handleKeyDown(e) {
+    // console.log(e.key);
 
-      if (e.key === 'Backspace') {
-        SetcurrentGuess(currentGuess.slice(0, -1))
-        return;
-      } else if (e.key === 'Enter') {
-        if (currentGuess.length !== GUESS_LEGTH || !wordJson.includes(currentGuess)) {
-          return;
-        }
+    if (isGameOver) return;
 
-        if (currentGuess === solution) {
-          setIsGameOver(true);
-        }
-        const oldGuesses = [...guesses];
-        oldGuesses[guesses.findIndex(val => val == null)] = currentGuess;
-        Setguesses(oldGuesses);
-        SetcurrentGuess('');
-      } else if (!/^[a-zA-Z]$/.test(e.key)) {
+    if (e.key === 'Backspace') {
+      SetcurrentGuess(currentGuess.slice(0, -1))
+      return;
+    } else if (e.key === 'Enter') {
+      if (currentGuess.length !== GUESS_LEGTH || !wordJson.includes(currentGuess)) {
         return;
       }
-      if (currentGuess.length >= GUESS_LEGTH) return;
-      SetcurrentGuess(currentGuess + e.key.toLowerCase());
+
+      if (currentGuess === solution) {
+        setIsGameOver(true);
+      }
+      const oldGuesses = [...guesses];
+      oldGuesses[guesses.findIndex(val => val == null)] = currentGuess;
+      Setguesses(oldGuesses);
+      SetcurrentGuess('');
+    } else if (!/^[a-zA-Z]$/.test(e.key)) {
+      return;
     }
+    if (currentGuess.length >= GUESS_LEGTH) return;
+    SetcurrentGuess(currentGuess + e.key.toLowerCase());
+  }
+
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -65,8 +75,8 @@ function App() {
   }, [currentGuess, isGameOver, solution])
 
   return (
-    <div className='App'>
-      <div className='header'>
+    <div className='App h-screen w-full m-0 p-0 flex flex-col items-center  bg-[#121213] '>
+      <div className='header select-none'>
         Wordle
       </div>
       <div>
@@ -82,35 +92,10 @@ function App() {
           })
         }
       </div>
-      <Keyboard  />
+      <Keyboard keyPressHandler={handleKeyDown} />
     </div>
   )
 }
 
 export default App
 
-
-
-const GUESS_LEGTH = 5;
-function Line({ guess, isFinal, solution }) {
-  const tiles = [];
-  for (let i = 0; i < GUESS_LEGTH; i++) {
-    const char = guess[i]
-    let className = 'tile'
-    if (isFinal) {
-      if (char === solution[i]) {
-        className += ' correct'
-      } else if (solution.includes(char)) {
-        className += ' close'
-      } else {
-        className += ' wrong'
-      }
-    }
-    tiles.push(<div key={i} className={className} >{char}</div>)
-  }
-  return (
-    <div className='line'>
-      {tiles}
-    </div>
-  )
-}

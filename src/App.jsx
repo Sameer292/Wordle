@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 // import wordJson from './wordle-words.json'
 import wordJson from './word.json'
-// import axios from 'axios';
 import './App.css'
-
+import Keyboard from '../components/Keyboard';
 function App() {
   const PROXY = "https://cors-anywhere.herokuapp.com/";
   const API_URL = "https://api.frontendexpert.io/api/fe/wordle-words";
@@ -45,18 +44,14 @@ function App() {
         if (currentGuess.length !== GUESS_LEGTH || !wordJson.includes(currentGuess)) {
           return;
         }
-        // const isCorrect = currentGuess === solution;
+
         if (currentGuess === solution) {
           setIsGameOver(true);
-          // return;
         }
         const oldGuesses = [...guesses];
         oldGuesses[guesses.findIndex(val => val == null)] = currentGuess;
         Setguesses(oldGuesses);
         SetcurrentGuess('');
-        // if (isCorrect) {
-        //   setIsGameOver(true);
-        // }
       } else if (!/^[a-zA-Z]$/.test(e.key)) {
         return;
       }
@@ -71,16 +66,23 @@ function App() {
 
   return (
     <div className='App'>
-      {
-        guesses.map((guess, index) => {
-          const isCurrentGuess = index === guesses.findIndex(val => val == null)
-          return <Line
-            key={index} guess={isCurrentGuess ? currentGuess : guess ?? ''}
-            isFinal={!isCurrentGuess && guess != null}
-            solution={solution}
-          />
-        })
-      }
+      <div className='header'>
+        Wordle
+      </div>
+      <div>
+
+        {
+          guesses.map((guess, index) => {
+            const isCurrentGuess = index === guesses.findIndex(val => val == null)
+            return <Line
+              key={index} guess={isCurrentGuess ? currentGuess : guess ?? ''}
+              isFinal={!isCurrentGuess && guess != null}
+              solution={solution}
+            />
+          })
+        }
+      </div>
+      <Keyboard  />
     </div>
   )
 }

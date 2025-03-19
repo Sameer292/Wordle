@@ -1,29 +1,52 @@
-.tile{
-
-    border: 1px solid white;
-    width: 50px;
-    height: 50px;
-    margin: 3px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-transform: uppercase;
-    color: #ffffff;
-    font-weight: 1000;
-    font-size: 2em;
-
+.App {
+  /* border: 1px solid white; */
+  height: 97vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #121213;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.header {
+    color: white;
+  height: 10%;
+  width: 100%;
+  /* border: 2px solid white; */
+  text-align: center;
+  font-size: 3em;
+  font-weight: 900;
+}
+.tile {
+  border: 1px solid white;
+  width: 50px;
+  height: 50px;
+  margin: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 1000;
+  font-size: 2em;
 }
 
-.line{
-    display: flex;
-    flex-direction: row;
+.line {
+  display: flex;
+  flex-direction: row;
 }
-.correct{
-    background-color: #538d4e;
+.correct {
+  background-color: #538d4e;
+  /* transform: scale(1.1); */
+  transition: 0.2s ease-in-out;
 }
-.close{
-    background-color: #b59f3b;
+.close {
+  background-color: #b59f3b;
 }
-.wrong{
-    background-color: #3a3a3c;
+.wrong {
+  background-color: #3a3a3c;
 }

@@ -3,6 +3,7 @@ import wordJson from './word.json'
 import './App.css'
 import Keyboard from '../components/Keyboard';
 import Line from '../components/Line';
+import Tiles from '../components/Tiles';
 
 
 
@@ -10,13 +11,44 @@ function App() {
   // const PROXY = "https://cors-anywhere.herokuapp.com/";
   // const API_URL = "https://api.frontendexpert.io/api/fe/wordle-words";
   const [solution, Setsolution] = useState('');
+  const [isGameOver, setIsGameOver] = useState(false);
   const [guesses, Setguesses] = useState(Array(6).fill(null));
   const [currentGuess, SetcurrentGuess] = useState('');
-  const [isGameOver, setIsGameOver] = useState(false);
-  // const [className, setClassName] = useState('tile');
+  const [keyStatuses, setKeyStatuses] = useState({});
+  const LIVES = 6;
+  const [lives, setLives] = useState();
   const GUESS_LEGTH = 5;
 
   useEffect(() => {
+    function initialize() {
+      const status = localStorage.getItem('isSolved');
+      const oldGuesses = JSON.parse(localStorage.getItem('guesses')) || Array(6).fill(null);
+      if (!oldGuesses.includes('')) {
+        console.log("Space full");
+        Setguesses(Array(6).fill(null));
+        setKeyStatuses({});
+      }
+      const livesLeft = localStorage.getItem('lives');
+      if (status === 'false' && livesLeft > 0) {
+        const randomWord = localStorage.getItem('randomWord');
+        setLives(livesLeft);
+        Setsolution(randomWord);
+        const keyStatuses = JSON.parse(localStorage.getItem('keyStatuses')) || {};
+        setKeyStatuses(keyStatuses)
+        Setguesses(oldGuesses)
+
+      } else {
+        setKeyStatuses({});
+        localStorage.setItem('keyStatuses', JSON.stringify({}));
+        Setguesses(Array(6).fill(null));
+        localStorage.setItem('guesses', JSON.stringify(Array(6).fill('')));
+        setLives(LIVES);
+        localStorage.setItem('lives', LIVES);
+        getWords();
+      }
+    }
+
+
     const getWords = async () => {
       try {
         // const response = await axios.get(PROXY + API_URL);
@@ -26,47 +58,41 @@ function App() {
         // console.log(response.data);
         // console.log(solution);
 
-
         const response = wordJson;
         const randomWord = response[Math.floor(Math.random() * response.length)];
         Setsolution(randomWord);
+        localStorage.setItem('randomWord', randomWord);
+        localStorage.setItem('isSolved', false);
+        localStorage.setItem('guesses', JSON.stringify(Array(6).fill('')));
+        localStorage.setItem('keyStatuses', JSON.stringify({}));
+        localStorage.setItem('lives', LIVES);
         console.log(randomWord);
       } catch (error) {
         console.error("Error fetching words:", error);
       }
 
     };
-    getWords();
+    initialize();
   }, [])
 
 
 
-  const [keyStatuses, setKeyStatuses] = useState(Object);
-  
   function updateKeyStatuses(guess) {
     let newStatuses = { ...keyStatuses };
     guess.split('').forEach((char, index) => {
       if (solution[index] === char) {
-        newStatuses[char] = 'correct'; 
+        newStatuses[char] = 'correct';
       } else if (solution.includes(char)) {
         if (newStatuses[char] !== 'correct') {
-          newStatuses[char] = 'close'; 
+          newStatuses[char] = 'close';
         }
       } else {
-        newStatuses[char] = 'wrong'; 
+        newStatuses[char] = 'wrong';
       }
     });
-    // console.log(keyStatuses);
     setKeyStatuses(newStatuses);
-    // console.log(keyStatuses);
+    localStorage.setItem('keyStatuses', JSON.stringify(newStatuses));
   }
-
-
-
-
-
-
-
 
   function handleKeyDown(e) {
 
@@ -79,11 +105,16 @@ function App() {
       if (currentGuess.length !== GUESS_LEGTH || !wordJson.includes(currentGuess)) {
         return;
       }
-
-      if (currentGuess === solution) setIsGameOver(true);
-      const oldGuesses = [...guesses];
-      oldGuesses[guesses.findIndex(val => val == null)] = currentGuess;
-      Setguesses(oldGuesses);
+      setLives(lives - 1);
+      localStorage.setItem('lives', lives - 1)
+      if (currentGuess === solution) {
+        setIsGameOver(true);
+        localStorage.setItem('isSolved', true);
+      }
+      const oldGuesses2 = [...guesses];
+      oldGuesses2[guesses.findIndex(val => val == null || val === '')] = currentGuess;
+      Setguesses(oldGuesses2);
+      localStorage.setItem('guesses', JSON.stringify(oldGuesses2));
       updateKeyStatuses(currentGuess)
       SetcurrentGuess('');
     } else if (!/^[a-zA-Z]$/.test(e.key)) {
@@ -104,11 +135,13 @@ function App() {
     <div className='App h-full m-0 p-0 flex  w-screen flex-col items-center justify-center   bg-[#121213] '>
       <div className='header select-none'>
         Wordle
-      </div> 
-      <div className='flex flex-col justify-center w-full items-center '>
-        { 
+      </div>
+      {/* <div className='flex flex-col justify-center w-full items-center '>
+        {
           guesses.map((guess, index) => {
-            const isCurrentGuess = index === guesses.findIndex(val => val == null)
+            const isCurrentGuess = index === guesses.findIndex(val => val == null || val === '');
+
+
             return <Line
               key={index} guess={isCurrentGuess ? currentGuess : guess ?? ''}
               isFinal={!isCurrentGuess && guess != null}
@@ -117,13 +150,13 @@ function App() {
             />
           })
         }
-      </div>
+      </div> */}
+      <Tiles guesses={guesses} currentGuess={currentGuess} solution={solution}/>
       <div className='keyboard flex justify-center items-center  pt-3' >
-      <Keyboard keyPressHandler={handleKeyDown} keyStatuses={keyStatuses} />
+        <Keyboard keyPressHandler={handleKeyDown} keyStatuses={keyStatuses} />
       </div>
     </div>
   )
 }
 
 export default App
-

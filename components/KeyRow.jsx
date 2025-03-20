@@ -28,14 +28,14 @@ function KeyRow({ row, keyPressHander, keyStatuses }) {
       key: item.target.innerText
     })
   }
-const enterBack = 'w-9';
+// const enterBack = 'w-9';
 const red = 'bg-red-400';
 
   return (
     <div className='flex w-full justify-center items-center '>
       {row.map((char) => { 
         return (
-          <div key={char} onDoubleClick={(e) => { e.preventDefault() }} style={{backgroundColor: applyKeyStyle(char)}} onClick={handleClick}  className={` ${char != 'Enter' && char != '⌫' && enterBack }  select-none  keys  p-3 correct text-white h-16  cursor-pointer m-[3px] font-bold text-xl rounded-md items-center flex justify-center `} >{char}</div>
+          <div key={char} onDoubleClick={(e) => { e.preventDefault() }} style={{backgroundColor: applyKeyStyle(char)}} onClick={handleClick}  className={` h-16 ${char != 'Enter' && char != '⌫' && 'w-9 sm:w-10' }  select-none  keys  p-3 correct text-white   cursor-pointer m-[3px] font-bold text-xl rounded-md items-center flex justify-center `} >{char}</div>
         )
       })}
     </div>

@@ -8,8 +8,7 @@
 }
 .tile {
   border: 2px solid rgb(103, 103, 103);
-  width: 2em;
-  height: 2em;
+  
   margin: 3px;
   display: flex;
   justify-content: center;

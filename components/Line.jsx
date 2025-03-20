@@ -28,7 +28,7 @@ function Line({ guess, isFinal, solution }) {
         }
 
         tiles.push(
-            <div key={i} className={`tile ${tileClasses[i]} ${bounceClasses[i]} ${flipClass}`}>
+            <div key={i} className={`tile h-[2em] w-[2em] sm:w-[1.5em] sm:h-[1.5em] ${tileClasses[i]} ${bounceClasses[i]} ${flipClass}`}>
                 {char}
             </div>
         );

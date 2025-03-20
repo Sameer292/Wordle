@@ -2,53 +2,61 @@ import { useState, useEffect } from "react";
 
 function Line({ guess, isFinal, solution }) {
     const GUESS_LENGTH = 5;
-
-    // State for tile colors and bounce animation
-    const [tileClasses, setTileClasses] = useState(Array(GUESS_LENGTH).fill("tile"));
+    const tiles = [];
     const [bounceClasses, setBounceClasses] = useState(Array(GUESS_LENGTH).fill(""));
+    const [tileClasses,setTileClasses] = useState(Array(GUESS_LENGTH).fill("")); 
+    const [flipClass, setFlipClass] = useState('');
     const [prevGuess, setPrevGuess] = useState("");
+    for (let i = 0; i < GUESS_LENGTH; i++) {
+        const char = guess[i];
 
-    useEffect(() => {
         if (isFinal) {
-            const newClasses = guess.split("").map((char, i) => {
-                if (char === solution[i]) return "tile correct";
-                if (solution.includes(char)) return "tile close";
-                return "tile wrong";
-            });
-            setTileClasses(newClasses);
+            setTimeout(() => {
+                setFlipClass(' flipper'); 
+            }, 0);
+
+            setTimeout(() => {
+                if (char === solution[i]) {
+                    tileClasses[i] = ' correct';
+                } else if (solution.includes(char)) {
+                    tileClasses[i] = ' close';
+                } else {
+                    tileClasses[i] = ' wrong';
+                }
+                setTileClasses([...tileClasses]);
+            }, 350);
         }
-    }, [isFinal, guess, solution]);
+
+        tiles.push(
+            <div key={i} className={`tile ${tileClasses[i]} ${bounceClasses[i]} ${flipClass}`}>
+                {char}
+            </div>
+        );
+    }
+
 
     useEffect(() => {
         let newBounceClasses = [...bounceClasses];
 
         for (let i = 0; i < GUESS_LENGTH; i++) {
             if (guess[i] && guess[i] !== prevGuess[i]) {
-                // Only animate the NEWLY added letter
                 newBounceClasses[i] = "jumper";
+            } else {
+                newBounceClasses[i] = "";
             }
         }
-
         setBounceClasses(newBounceClasses);
-        setPrevGuess(guess); // Update previous guess for next comparison
-
-        // Remove animation after 300ms
-        const timeout = setTimeout(() => {
-            setBounceClasses(Array(GUESS_LENGTH).fill(""));
-        }, 300);
-
-        return () => clearTimeout(timeout);
-    }, [guess]); // Runs only when `guess` changes
+        setPrevGuess(guess);
+        return;
+    }, [guess]);
 
     return (
-        <div className="line">
-            {Array.from({ length: GUESS_LENGTH }).map((_, i) => (
-                <div key={i} className={`${tileClasses[i]} ${bounceClasses[i]}`}>
-                    {guess[i] || ""}
-                </div>
-            ))}
+        <div className='line'>
+            {tiles}
         </div>
-    );  
+    )
 }
 
-export default Line;
+export default Line
+
+

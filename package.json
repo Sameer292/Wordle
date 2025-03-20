@@ -5,12 +5,20 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-	"start":"vite --host",
+    "start": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fontsource-variable/dancing-script": "^5.2.5",
+    "@fontsource/arvo": "^5.2.5",
+    "@fontsource/pacifico": "^5.2.5",
+    "@fontsource/roboto": "^5.2.5",
+    "@mui/icons-material": "^6.4.8",
+    "@mui/material": "^6.4.8",
     "@tailwindcss/vite": "^4.0.14",
     "axios": "^1.8.1",
     "react": "^19.0.0",

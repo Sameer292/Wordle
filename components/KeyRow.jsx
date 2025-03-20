@@ -35,7 +35,7 @@ const red = 'bg-red-400';
     <div className='flex w-full justify-center items-center '>
       {row.map((char) => { 
         return (
-          <div key={char} onDoubleClick={(e) => { e.preventDefault() }} style={{backgroundColor: applyKeyStyle(char)}} onClick={handleClick}  className={` h-16 ${char != 'Enter' && char != '⌫' && 'w-9 sm:w-10' }  select-none  keys  p-3 correct text-white   cursor-pointer m-[3px] font-bold text-xl rounded-md items-center flex justify-center `} >{char}</div>
+          <div key={char} onDoubleClick={(e) => { e.preventDefault() }} style={{backgroundColor: applyKeyStyle(char)}} onClick={handleClick}  className={` h-16 ${char != 'Enter' && char != '⌫' && 'w-9 sm:w-10' }  select-none active:scale-[0.7] transition keys  p-3 correct text-white   cursor-pointer m-[3px] font-bold text-xl rounded-md items-center flex justify-center `} >{char}</div>
         )
       })}
     </div>

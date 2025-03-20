@@ -2,8 +2,12 @@ import { useEffect, useState } from 'react'
 import wordJson from './word.json'
 import './App.css'
 import Keyboard from '../components/Keyboard';
-import Line from '../components/Line';
 import Tiles from '../components/Tiles';
+// import { Modal } from '@mui/material';
+// Supports weights 400-700
+import '@fontsource-variable/dancing-script';
+// import '@fontsource/pacifico';
+import BasicModal from '../components/BasicModal';
 
 
 
@@ -133,25 +137,20 @@ function App() {
 
   return (
     <div className='App h-full m-0 p-0 flex  w-screen flex-col items-center justify-center   bg-[#121213] '>
-      <div className='header select-none'>
-        Wordle
+
+
+      <div className='header justify-between flex select-none '>
+        <div className=' w-1/3 flex justify-start items-center text-3xl' style={{ fontFamily: 'dancing script variable, serif' }} >
+          Shree
+        </div>
+        <div className='w-1/3'>
+          Wordle
+        </div>
+        <div className='w-1/3 flex justify-end items-center' >
+          <BasicModal />
+        </div>
       </div>
-      {/* <div className='flex flex-col justify-center w-full items-center '>
-        {
-          guesses.map((guess, index) => {
-            const isCurrentGuess = index === guesses.findIndex(val => val == null || val === '');
-
-
-            return <Line
-              key={index} guess={isCurrentGuess ? currentGuess : guess ?? ''}
-              isFinal={!isCurrentGuess && guess != null}
-              solution={solution}
-
-            />
-          })
-        }
-      </div> */}
-      <Tiles guesses={guesses} currentGuess={currentGuess} solution={solution}/>
+      <Tiles guesses={guesses} currentGuess={currentGuess} solution={solution} />
       <div className='keyboard flex justify-center items-center  pt-3' >
         <Keyboard keyPressHandler={handleKeyDown} keyStatuses={keyStatuses} />
       </div>

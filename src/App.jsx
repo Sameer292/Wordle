@@ -8,6 +8,7 @@ import Tiles from '../components/Tiles';
 import '@fontsource-variable/dancing-script';
 // import '@fontsource/pacifico';
 import BasicModal from '../components/BasicModal';
+import GameOver from '../components/GameOver';
 
 
 
@@ -16,6 +17,7 @@ function App() {
   // const API_URL = "https://api.frontendexpert.io/api/fe/wordle-words";
   const [solution, Setsolution] = useState('');
   const [isGameOver, setIsGameOver] = useState(false);
+  const [gameOverModal, setGameOverModal] = useState(false);
   const [guesses, Setguesses] = useState(Array(6).fill(null));
   const [currentGuess, SetcurrentGuess] = useState('');
   const [keyStatuses, setKeyStatuses] = useState({});
@@ -23,61 +25,81 @@ function App() {
   const [lives, setLives] = useState();
   const GUESS_LEGTH = 5;
 
-  useEffect(() => {
-    function initialize() {
-      const status = localStorage.getItem('isSolved');
-      const oldGuesses = JSON.parse(localStorage.getItem('guesses')) || Array(6).fill(null);
-      if (!oldGuesses.includes('')) {
-        console.log("Space full");
-        Setguesses(Array(6).fill(null));
-        setKeyStatuses({});
-      }
-      const livesLeft = localStorage.getItem('lives');
-      if (status === 'false' && livesLeft > 0) {
-        const randomWord = localStorage.getItem('randomWord');
-        setLives(livesLeft);
-        Setsolution(randomWord);
-        const keyStatuses = JSON.parse(localStorage.getItem('keyStatuses')) || {};
-        setKeyStatuses(keyStatuses)
-        Setguesses(oldGuesses)
 
-      } else {
-        setKeyStatuses({});
-        localStorage.setItem('keyStatuses', JSON.stringify({}));
-        Setguesses(Array(6).fill(null));
-        localStorage.setItem('guesses', JSON.stringify(Array(6).fill('')));
-        setLives(LIVES);
-        localStorage.setItem('lives', LIVES);
-        getWords();
-      }
+
+  const getWords = async () => {
+    try {
+      // const response = await axios.get(PROXY + API_URL);
+      // const words = await fetch('/wordle-words.json');
+      // const randomWord = response[Math.floor(Math.random() * response.length)];
+      // Setsolution(randomWord);
+      // console.log(response.data);
+      // console.log(solution);
+
+      const response = wordJson;
+      const randomWord = response[Math.floor(Math.random() * response.length)];
+      Setsolution(randomWord);
+      localStorage.setItem('randomWord', randomWord);
+      localStorage.setItem('isSolved', false);
+      localStorage.setItem('guesses', JSON.stringify(Array(6).fill('')));
+      localStorage.setItem('keyStatuses', JSON.stringify({}));
+      localStorage.setItem('lives', LIVES);
+      setLives(LIVES);
+      setIsGameOver(false);
+      Setguesses(Array(6).fill(null));
+      SetcurrentGuess('');
+      setKeyStatuses({});
+      console.log(randomWord);
+    } catch (error) {
+      console.error("Error fetching words:", error);
     }
 
+  };
+  function initialize() {
+    const status = localStorage.getItem('isSolved');
+    const oldGuesses = JSON.parse(localStorage.getItem('guesses')) || Array(6).fill(null);
+    if (!oldGuesses.includes('')) {
+      console.log("Space full");
+      Setguesses(Array(6).fill(null));
+      setKeyStatuses({});
+    }
+    const livesLeft = localStorage.getItem('lives');
+    if (status === 'false' && livesLeft > 0) {
+      const randomWord = localStorage.getItem('randomWord');
+      setLives(livesLeft);
+      Setsolution(randomWord);
+      const keyStatuses = JSON.parse(localStorage.getItem('keyStatuses')) || {};
+      setKeyStatuses(keyStatuses)
+      Setguesses(oldGuesses)
 
-    const getWords = async () => {
-      try {
-        // const response = await axios.get(PROXY + API_URL);
-        // const words = await fetch('/wordle-words.json');
-        // const randomWord = response[Math.floor(Math.random() * response.length)];
-        // Setsolution(randomWord);
-        // console.log(response.data);
-        // console.log(solution);
+    } else {
+      setKeyStatuses({});
+      localStorage.setItem('keyStatuses', JSON.stringify({}));
+      Setguesses(Array(6).fill(null));
+      localStorage.setItem('guesses', JSON.stringify(Array(6).fill('')));
+      setLives(LIVES);
+      localStorage.setItem('lives', LIVES);
+      getWords();
+    }
+  }
 
-        const response = wordJson;
-        const randomWord = response[Math.floor(Math.random() * response.length)];
-        Setsolution(randomWord);
-        localStorage.setItem('randomWord', randomWord);
-        localStorage.setItem('isSolved', false);
-        localStorage.setItem('guesses', JSON.stringify(Array(6).fill('')));
-        localStorage.setItem('keyStatuses', JSON.stringify({}));
-        localStorage.setItem('lives', LIVES);
-        console.log(randomWord);
-      } catch (error) {
-        console.error("Error fetching words:", error);
-      }
-
-    };
+  useEffect(() => {
     initialize();
   }, [])
+
+
+
+  function gameReset() {
+    console.log("Reseted game");
+    // getWords();
+    initialize();
+  }
+
+  function gameRetry() {
+    console.log("Retry game");
+
+  }
+
 
 
 
@@ -128,6 +150,16 @@ function App() {
     SetcurrentGuess(currentGuess + e.key.toLowerCase());
   }
 
+  function gameoverModal() {
+    console.log("Fish");
+    // const status = localStorage.getItem('isSolved');
+    const status = JSON.parse(localStorage.getItem("isSolved"));
+    console.log(status);
+
+
+    return <GameOver isSolved={status} gameReset={gameReset} gameRetry={gameRetry} />
+  }
+
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
@@ -135,12 +167,31 @@ function App() {
     }
   }, [currentGuess, isGameOver, solution])
 
+
+
+  useEffect(() => {
+    if (lives < 1) {
+      setIsGameOver(true);
+    }
+    if (isGameOver) {
+      const timer = setTimeout(() => {
+        setGameOverModal(true);
+      }, 800);
+
+      return () => clearTimeout(timer);
+    } else {
+      setGameOverModal(false);
+    }
+  }, [isGameOver, lives]);
+
+
+
   return (
     <div className='App h-full m-0 p-0 flex  w-screen flex-col items-center justify-center   bg-[#121213] '>
 
 
       <div className='header justify-between flex select-none '>
-        <div className=' w-1/3 flex justify-start items-center text-3xl' style={{ fontFamily: 'dancing script variable, serif' }} >
+        <div className=' w-1/3 flex justify-start text-[#de1a41] pl-5    items-center text-3xl' style={{ fontFamily: 'dancing script variable, serif' }} >
           Shree
         </div>
         <div className='w-1/3'>
@@ -154,6 +205,7 @@ function App() {
       <div className='keyboard flex justify-center items-center  pt-3' >
         <Keyboard keyPressHandler={handleKeyDown} keyStatuses={keyStatuses} />
       </div>
+      {gameOverModal && gameoverModal()}
     </div>
   )
 }

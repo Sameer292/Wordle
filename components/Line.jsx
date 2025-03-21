@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 function Line({ guess, isFinal, solution }) {
     const GUESS_LENGTH = 5;
     const tiles = [];
-    const [bounceClasses, setBounceClasses] = useState(Array(GUESS_LENGTH).fill(""));
-    const [tileClasses,setTileClasses] = useState(Array(GUESS_LENGTH).fill("")); 
+    const [bounceClasses, setBounceClasses] = useState(Array(GUESS_LENGTH).fill(null));
+    const [tileClasses,setTileClasses] = useState(Array(GUESS_LENGTH).fill(null)); 
     const [flipClass, setFlipClass] = useState('');
     const [prevGuess, setPrevGuess] = useState("");
     for (let i = 0; i < GUESS_LENGTH; i++) {
